@@ -1,4 +1,4 @@
-package io.egen.exception;
+package io.egen.trucker.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
