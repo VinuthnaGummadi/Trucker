@@ -1,0 +1,64 @@
+package rules
+
+import io.egen.trucker.entity.Alert;
+import io.egen.trucker.entity.Reading;
+import io.egen.trucker.entity.Vehicle;
+import io.egen.trucker.entity.Tyre;
+import io.egen.trucker.constants.Constants;
+import java.util.ArrayList;
+import java.util.List;
+
+global java.util.List alerts;
+
+rule "engine rpm is greater than readline rpm"
+    when
+            readingObject: Reading();
+            vehicleObject:Vehicle();
+            eval(readingObject.getEngineRpm()>vehicleObject.getRedlineRpm());
+    then
+            System.out.println("engine rpm is greater than readline rpm");
+             Alert alert1 = new Alert();
+            alert1.setPriority(Constants.ALERT_HIGH);
+            System.out.println(alert1.getPriority());
+            alerts.add(alert1);
+end
+
+rule "fuel volume is 10% of max fuel volume"
+    when
+            readingObject: Reading();
+            vehicleObject:Vehicle();
+            eval(readingObject.getFuelVolume() ==  (10 * vehicleObject.getMaxFuelVolume())/100);
+    then
+            Alert alert2 = new Alert();
+            alert2.setPriority(Constants.ALERT_MEDIUM);
+            System.out.println("fuel volume is 10% of max fuel volume");
+            System.out.println(alert2.getPriority());
+            alerts.add(alert2);
+end
+
+rule "tyre pressure alert"
+    when
+            tyreObject: Tyre();
+            eval(tyreObject.getFrontLeft()<32 || tyreObject.getFrontLeft()>36 ||
+                    tyreObject.getFrontRight()<32 || tyreObject.getFrontRight()>36 ||
+                    tyreObject.getRearLeft()<32 || tyreObject.getRearLeft()>36 ||
+                    tyreObject.getRearRight()<32 || tyreObject.getRearRight()>36);
+    then
+            Alert alert3 = new Alert();
+            System.out.println("tyre pressure alert");
+            alert3.setPriority(Constants.ALERT_LOW);
+            System.out.println(alert3.getPriority());
+            alerts.add(alert3);
+end
+
+rule "engine coolant and light"
+    when
+            readingObject: Reading();
+            eval(readingObject.isEngineCoolantLow() || readingObject.isCheckEngineLightOn());
+    then
+            Alert alert4 = new Alert();
+            System.out.println("engine coolant and light");
+            alert4.setPriority(Constants.ALERT_LOW);
+            System.out.println(alert4.getPriority());
+            alerts.add(alert4);
+end
